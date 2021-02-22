@@ -1,0 +1,32 @@
+{
+  "name": "bs-wxsdk",
+  "version": "1.0.0",
+  "description": "wxsdk",
+  "main": "dist/npmpackage-name.js",
+  "module": "dist/npmpackage-name.es.js",
+  "scripts": {
+    "build": "rm -rf dist && rollup --config",
+    "release_major": "npm version major",
+    "release_minor": "npm version minor",
+    "release_patch": "npm version patch",
+    "postversion": "npm publish",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "wx"
+  ],
+  "author": "lingl",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/plugin-external-helpers": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.12.17",
+    "@babel/preset-env": "^7.12.17",
+    "rollup": "^2.39.0",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-uglify": "^6.0.4"
+  }
+}
