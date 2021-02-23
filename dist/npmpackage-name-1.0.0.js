@@ -1,5 +1,5 @@
 /*!
-* wxsdk v1.0.0
+* bs-wxsdk v1.0.0
 * (c) 2021 lingl
 */
 (function (global, factory) {
@@ -17,6 +17,7 @@
     _this.checkNetworkStatus();
     _this.getNetworkType();
     _this.routerWatcher();
+    _this.getUniqueId();
   }
 
   function destroy(_this) {
@@ -53,10 +54,33 @@
     !wx.canIUse('getAccountInfoSync') && console.error('getAccountInfoSync can not use');
   }
 
+  function wxuuid() {
+    var s = [];
+    var hexDigits = "0123456789abcdef";
+    for (var i = 0; i < 36; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+    }
+    s[14] = "4";
+    s[19] = hexDigits.substr(s[19] & 0x3 | 0x8, 1);
+    s[8] = s[13] = s[18] = s[23] = "-";
+    var uuid = s.join("");
+    return uuid;
+  }
+
+  function getUniqueId(_this) {
+    var uuid = wxuuid();
+    console.log(uuid);
+    wx.setStorage({
+      key: "uuid",
+      data: uuid
+    });
+    _this.appMsg.sys.equipment_unique_id = uuid;
+  }
+
   function getSystemInfo(_this) {
     try {
       var res = wx.getSystemInfoSync();
-      _this.appMsg.sys.version_code = res.SDKVersion;
+      _this.appMsg.sys.version_name = res.SDKVersion;
       _this.appMsg.sys.application_platform = res.platform;
       _this.appMsg.sys.equipment_model = res.model;
       _this.appMsg.sys.os = res.system.split(' ')[0];
@@ -71,8 +95,31 @@
     }
   }
 
+  function createCommonjsModule(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
+
+  var _extends_1 = createCommonjsModule(function (module) {
+    function _extends() {
+      module.exports = _extends = Object.assign || function (target) {
+        for (var i = 1; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (Object.prototype.hasOwnProperty.call(source, key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      };
+      return _extends.apply(this, arguments);
+    }
+    module.exports = _extends;
+  });
+
   function getAccountInfo(_this) {
     var account = wx.getAccountInfoSync();
+    _this.appId = account.miniProgram.appId;
     console.log('accountInfo', account);
   }
   function getUserInfo(_this) {
@@ -85,7 +132,7 @@
         userInfo.province;
         userInfo.city;
         userInfo.country;
-        _this.appMsg.et.common_info.userInfo = res;
+        _this.appMsg.et.common_info = _extends_1({}, _this.appMsg.et.common_info, res);
         console.log('userInfo', res);
       }
     });
@@ -158,22 +205,21 @@
     _this.appMsg.et.event_name = evtName;
     _this.appMsg.et.common_info.event_type = type;
     _this.appMsg.et.common_info.others = others;
-    console.log(_this.appMsg.et);
-    console.log('_appMsg', _this.appMsg);
     _this.upload();
   }
 
-  function Maidian(url, method) {
+  function Maidian(url, method, appSecret) {
     this.appMsg = {
       sys: {
-        version_code: '',
+        version_name: '',
         application_platform: '',
         equipment_model: '',
         os: '',
         os_version: '',
         equipment_brand: '',
         screen_size: '',
-        sdk_version: ''
+        sdk_version: '',
+        equipment_unique_id: ''
       },
       et: {
         event_name: '',
@@ -182,22 +228,27 @@
           client_time: 0,
           lang: '',
           event_type: '',
-          network_mode: '',
-          userInfo: null
+          network_mode: ''
         }
       }
     };
     this.url = url;
     this.method = method;
+    this.appId = null;
+    this.appSecret = appSecret;
+    this.app_openid = null;
   }
   Maidian.prototype.init = function () {
     init(this);
+  };
+  Maidian.prototype.getUniqueId = function () {
+    getUniqueId(this);
   };
   Maidian.prototype.getSysInfo = function () {
     getSystemInfo(this);
   };
   Maidian.prototype.getAccountInfo = function () {
-    getAccountInfo();
+    getAccountInfo(this);
   };
   Maidian.prototype.getUserInfo = function () {
     getUserInfo(this);

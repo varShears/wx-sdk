@@ -21,4 +21,4 @@
 npm i bs-wxsdk -S
 ```
 
-然后实例化Maidian，提供了无埋点方法 init ，同时也提供了手动埋点 handle ，提供了type, evtName, others， 埋点类型，事件名称，和其他的自定义属性。
+然后实例化Maidian，提供了无埋点方法 init , 传入上报地址 url ,上报请求方式 methods , 和小程序的secret，同时也提供了手动埋点 handle ，提供了type, evtName, others， 埋点类型，事件名称，和其他的自定义属性。

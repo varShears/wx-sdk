@@ -8,7 +8,7 @@ function init(_this){
   _this.checkNetworkStatus()
   _this.getNetworkType()
   _this.routerWatcher()
-
+  _this.getUniqueId()
 }
 
 export default init

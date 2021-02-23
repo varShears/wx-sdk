@@ -1,7 +1,7 @@
 export function getSystemInfo(_this){
   try {
     const res = wx.getSystemInfoSync()
-    _this.appMsg.sys.version_code = res.SDKVersion
+    _this.appMsg.sys.version_name = res.SDKVersion
     _this.appMsg.sys.application_platform = res.platform
     _this.appMsg.sys.equipment_model = res.model
     _this.appMsg.sys.os = res.system.split(' ')[0]
